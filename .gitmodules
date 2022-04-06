@@ -1,0 +1,3 @@
+[submodule "libdclist"]
+	path = libdclist
+	url = https://github.com/Masaya-Kamei/libdclist.git
