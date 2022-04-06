@@ -27,8 +27,6 @@ typedef struct s_buf
 	size_t	total_len;
 }			t_buf;
 
-int		get_next_line(int fd, char **line);
-
 // utils
 char	*get_buf_start(t_buf *target_buf);
 size_t	get_total_len(t_dclist *target_buf_lst);
