@@ -6,7 +6,7 @@
 /*   By: mkamei <mkamei@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 16:03:07 by mkamei            #+#    #+#             */
-/*   Updated: 2022/04/06 10:42:11 by mkamei           ###   ########.fr       */
+/*   Updated: 2022/04/06 12:18:07 by mkamei           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,27 +28,25 @@ static int	split_into_line_and_save(
 {
 	const int	last_len = get_valid_last_buf_len(buf_lst, nl_ptr);
 	size_t		i;
-	t_dclist	*now_lst;
-	t_buf		*now_buf;
+	t_dclist	*lst;
+	t_buf		*buf;
 
 	*line = malloc(get_total_len(dclst_last(buf_lst)->prev) + last_len + 1);
 	if (*line == NULL)
 		return (-1);
 	i = 0;
-	now_lst = buf_lst->next;
-	now_buf = now_lst->p;
-	while (now_lst != dclst_last(buf_lst))
+	lst = dclst_with_take_p(buf_lst->next, (void **)&buf);
+	while (lst != dclst_last(buf_lst))
 	{
-		my_memcpy(&(*line)[i], get_buf_start(now_buf), now_buf->left_len);
-		i += now_buf->left_len;
-		now_lst = dclst_pop_del_next(now_lst, free);
-		now_buf = now_lst->p;
+		my_memcpy(&(*line)[i], get_buf_start(buf), buf->left_len);
+		i += buf->left_len;
+		lst = dclst_with_take_p(dclst_popdel_next(lst, free), (void **)&buf);
 	}
-	my_memcpy(&(*line)[i], get_buf_start(now_buf), last_len);
+	my_memcpy(&(*line)[i], get_buf_start(buf), last_len);
 	(*line)[i + last_len] = '\0';
 	if (nl_ptr)
-		set_buf_member(now_buf, now_buf->start_i + last_len + 1,
-			now_buf->left_len - last_len - 1, now_buf->left_len - last_len - 1);
+		set_buf_member(buf, buf->start_i + last_len + 1,
+			buf->left_len - last_len - 1, buf->left_len - last_len - 1);
 	else
 		dclst_clear(&buf_lst, free);
 	return (1);
